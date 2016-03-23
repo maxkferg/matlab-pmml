@@ -1,25 +1,25 @@
 
 This package will only take Gaussian process models trained by sklearn package.
 
-pmml package contains three functions so far: 
+pmml package contains three functions so far:
 1. GP_translator(file_name,model):
 	file_name: the PMML file will saved in file_name
 	model: a trained GP model
 	This function will not return anything
-	
+
 2. GP_parser(file_name):
 	file_name: the name of PMML file that will be read and parsed.
 	This function will return all the GP parameters, such as lambda, noise term…
-	
+
 3.GP_score(test_data):
-	test_data: test data 
+	test_data: test data
 	This function will return the scoring results.
 
 So far, it is a preliminary package with limitation of:
 1. It will not show the error when users use it in a wrong way, for example: user passed a wrong model.
 
-2. As sklearn package will only operate on numerical matrix, which is pre-processed matrix only contains number, there are some function in PMML will not be needed, such as . 
-	The GP_translator is able to automatically generate PMML file from a Gaussian process model, which contains: a Header, Datadictionary, Gaussian Process Model, Mining schema, output, LocalTransformations, kernel type, and GaussianProcessDictionary. 
+2. As sklearn package will only operate on numerical matrix, which is pre-processed matrix only contains number, there are some function in PMML will not be needed, such as .
+	The GP_translator is able to automatically generate PMML file from a Gaussian process model, which contains: a Header, Datadictionary, Gaussian Process Model, Mining schema, output, LocalTransformations, kernel type, and GaussianProcessDictionary.
 
 3. As there is only one type of output, the output form is fixed.
 
