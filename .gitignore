@@ -1,0 +1,4 @@
+*.pyc
+*.egg
+python/build/
+python/build/*
