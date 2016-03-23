@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='ASCII'?>
+<PMML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.dmg.org/PMML-4_2" version="4.2" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+  <Header copyright="Copyright (c) 2015 Jinkyoo" description="Gaussian Process Model">
+    <Extension extender="Python-PMML" name="user" value="Jinkyoo"/>
+    <Application name="Python-PMML" version="0.1"/>
+    <Timestamp>2016-3-10 15:9:39</Timestamp>
+  </Header>
+  <DataDictionary numberOfFields="3">
+    <DataField dataType="double" name="x1" optype="continuous"/>
+    <DataField dataType="double" name="x2" optype="continuous"/>
+    <DataField dataType="double" name="y1" optype="continuous"/>
+  </DataDictionary>
+  <GaussianProcessModel modelName="Gaussian Process Model" functionName="regression">
+    <MiningSchema>
+      <MiningField name="x1" usageType="active"/>
+      <MiningField name="x2" usageType="active"/>
+      <MiningField name="y1" usageType="predicted"/>
+    </MiningSchema>
+    <Output>
+      <OutputField dataType="double" feature="predictedValue" name="MeanValue" optype="continuous"/>
+      <OutputField dataType="double" feature="predictedValue" name="StandardDeviation" optype="continuous"/>
+    </Output>
+    <LocalTransformations>
+      <DerivedField dataType="double" name="derived_x1" optype="continuous">
+        <NormContinuous field="x1">
+          <LinearNorm norm="-1.52752523165" orig="0"/>
+          <LinearNorm norm="0" orig="3.5"/>
+        </NormContinuous>
+      </DerivedField>
+      <DerivedField dataType="double" name="derived_x2" optype="continuous">
+        <NormContinuous field="x2">
+          <LinearNorm norm="-1.52752523165" orig="0"/>
+          <LinearNorm norm="0" orig="3.5"/>
+        </NormContinuous>
+      </DerivedField>
+      <DerivedField dataType="double" name="derived_y1" optype="continuous">
+        <NormContinuous field="y1">
+          <LinearNorm norm="-1.69245584275" orig="0"/>
+          <LinearNorm norm="0" orig="3.25"/>
+        </NormContinuous>
+      </DerivedField>
+    </LocalTransformations>
+    <GPSquaredExponentialKernelType>
+      <gamma value="1"/>
+      <noiseVariance value="0.01"/>
+      <lambda>
+        <Array n="2" type="real">3.16227766017 3.16227766017</Array>
+      </lambda>
+    </GPSquaredExponentialKernelType>
+    <GaussianProcessDictionary numberOfSamples="4">
+      <GaussianProcessFeature>
+        <GaussianProcessFeatureFields numberOfFields="2">
+          <FieldRef field="derived_x1"/>
+          <FieldRef field="derived_x2"/>
+        </GaussianProcessFeatureFields>
+        <GaussianProcessFeatureInstance id="1">
+          <REAL-SparseArray n="2">
+            <Indices>1 2</Indices>
+            <REAL-Entries>-1.09108945118 -1.09108945118</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessFeatureInstance>
+        <GaussianProcessFeatureInstance id="2">
+          <REAL-SparseArray n="2">
+            <Indices>1 2</Indices>
+            <REAL-Entries>-0.654653670708 -0.654653670708</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessFeatureInstance>
+        <GaussianProcessFeatureInstance id="3">
+          <REAL-SparseArray n="2">
+            <Indices>1 2</Indices>
+            <REAL-Entries>0.218217890236 0.218217890236</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessFeatureInstance>
+        <GaussianProcessFeatureInstance id="4">
+          <REAL-SparseArray n="2">
+            <Indices>1 2</Indices>
+            <REAL-Entries>1.52752523165 1.52752523165</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessFeatureInstance>
+      </GaussianProcessFeature>
+      <GaussianProcessTarget>
+        <GaussianProcessTargetFields numberOfFields="1">
+          <FieldRef field="derived_y1"/>
+        </GaussianProcessTargetFields>
+        <GaussianProcessTargetInstance id="1">
+          <REAL-SparseArray n="1">
+            <Indices>1</Indices>
+            <REAL-Entries>-1.17170019883</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessTargetInstance>
+        <GaussianProcessTargetInstance id="2">
+          <REAL-SparseArray n="1">
+            <Indices>1</Indices>
+            <REAL-Entries>-0.650944554904</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessTargetInstance>
+        <GaussianProcessTargetInstance id="3">
+          <REAL-SparseArray n="1">
+            <Indices>1</Indices>
+            <REAL-Entries>0.390566732942</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessTargetInstance>
+        <GaussianProcessTargetInstance id="4">
+          <REAL-SparseArray n="1">
+            <Indices>1</Indices>
+            <REAL-Entries>1.43207802079</REAL-Entries>
+          </REAL-SparseArray>
+        </GaussianProcessTargetInstance>
+      </GaussianProcessTarget>
+    </GaussianProcessDictionary>
+  </GaussianProcessModel>
+</PMML>
