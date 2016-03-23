@@ -23,7 +23,7 @@ def kernel_function(kernelName, k_lambda,ks):
         ss=1.-td
         ans=np.prod(ss)
         return ans
-    
+
 
 def radi_k(DX,k_lambda,nugget,kernelName):
     size=np.shape(DX)
@@ -72,4 +72,4 @@ def radi_new_x(tx,k_lambda,nugget,kernelName):
         ks=tx[i]-tx[i]
         kernel=kernel_function(kernelName,k_lambda,ks)
         k_tx[i]=kernel+nugget
-    return k_tx 
+    return k_tx

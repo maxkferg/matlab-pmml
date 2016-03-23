@@ -1,7 +1,7 @@
 import lxml.etree as ET
 import numpy as np
-from . import GP_scoring as scoring 
-from . import GP_parsing as parsing 
+from . import GP_scoring as scoring
+from . import GP_parsing as parsing
 from . import GP_translating as translating
 
 class GP:
@@ -65,8 +65,8 @@ class GP:
     #----------------Parse a PMML file ----- -----------------#
     #---------------------------------------------------------#
     def GP_parser(self,file_name):
-        
-        nsp="{http://www.dmg.org/PMML-4_2}" 
+
+        nsp="{http://www.dmg.org/PMML-4_2}"
 
         GPM=parsing.parse_GPM(nsp,file_name)
 
@@ -88,28 +88,28 @@ class GP:
         self.gamma=gamma
         self.nugget=nugget
         self.kernelName=kernelName
-        
+
         return self
     #---------------------------------------------------------#
     #---------------- New prediction   -----------------------#
     #---------------------------------------------------------#
     def GP_scorer(self,tx):
-        
+
         # convert to lambda to theta (theta=(1/lambda)^2)
         theta=[(1/x)*(1/x) for x in self.k_lambda]
         #print theta
         #
         tx=(tx-self.X_mean)/self.X_std
-        
+
         K_1=scoring.radi_k(self.X,theta,self.nugget,self.kernelName)
-        k_T=scoring.radi_new_k(tx,self.X,theta,self.kernelName)  
-        
+        k_T=scoring.radi_new_k(tx,self.X,theta,self.kernelName)
+
         p=np.dot(k_T,K_1)
         mu=np.dot(p,self.Y)
-        
+
         #
         mu=(mu)*self.Y_std+self.Y_mean
-        
+
         #normalized sigma?
         k_tx=scoring.radi_new_x(tx,theta,self.nugget,self.kernelName)
         t=k_tx-np.sum(p*k_T,axis=1)

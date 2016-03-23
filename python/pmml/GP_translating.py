@@ -1,6 +1,6 @@
 # This file is part of the PMML package for python.
 #
-# The PMML package is free software: you can redistribute it and/or 
+# The PMML package is free software: you can redistribute it and/or
 # modify it.
 #
 # The PMML package is distributed in the hope that it will be useful,
@@ -23,7 +23,7 @@ def trans_get_para(model):
     Y=model.y
     nugget=model.nugget
     k_lambda=model.theta_
-    
+
     X=np.squeeze(X)
     Y=np.squeeze(Y)
     k_lambda=np.squeeze(k_lambda)
@@ -49,7 +49,7 @@ def trans_get_dimension(X,Y):
         xcol=1
     else:
         xcol=sx[1]
-        
+
     if len(sy)==1:
         ycol=1
     else:
@@ -71,7 +71,7 @@ def trans_name(xcol, ycol):
 
 """ some basic information """
 def trans_root(description,copyright,Annotation):
-    
+
     time = datetime.datetime.now()
     time=str(time.year)+"-"+str(time.month)+"-"+str(time.day)+" "+str(time.hour)+":"+ str(time.minute)+":"+str(time.second)
     user_name=str(getpass.getuser())
@@ -100,12 +100,12 @@ def trans_root(description,copyright,Annotation):
     ET.SubElement(Header,"Extension", name="user",value=user_name,extender="Python-PMML")
     ET.SubElement(Header,"Application", name="Python-PMML",version=py_version)
     ET.SubElement(Header,"Timestamp").text=time
-    
+
     if Annotation is not None:
         ET.SubElement(Header,"Annotation").text=Annotation
     return PMML
-    
-"""DataField level"""   
+
+"""DataField level"""
 def trans_dataDictionary(PMML,featureName,targetName,xcol,ycol):
     DataDictionary=ET.SubElement(PMML,"DataDictionary",numberOfFields="{0}".format(xcol+ycol))
 
@@ -117,9 +117,9 @@ def trans_dataDictionary(PMML,featureName,targetName,xcol,ycol):
 
     return PMML
 
-"""GP level"""        
+"""GP level"""
 def trans_GP(PMML):
-   
+
     GaussianProcessModel=ET.SubElement(PMML,"GaussianProcessModel")
     GaussianProcessModel.set("modelName","Gaussian Process Model")
     GaussianProcessModel.set("functionName","regression")
@@ -140,7 +140,7 @@ def tarns_minningSchema(GaussianProcessModel,featureName,targetName):
 
 """Output"""
 def trans_output(GaussianProcessModel):
-    
+
     Output=ET.SubElement(GaussianProcessModel,"Output")
     ET.SubElement(Output,"OutputField",name="MeanValue",optype="continuous",dataType="double", feature="predictedValue")
     ET.SubElement(Output,"OutputField",name="StandardDeviation",optype="continuous",dataType="double", feature="predictedValue")
@@ -187,20 +187,20 @@ def trans_kernel(GaussianProcessModel,k_lambda,nugget,gamma,xcol,corr):
     theta="{0}".format(lamb_inv[0])
     for i in range(1,xcol):
         theta=theta+" {0}".format(lamb_inv[i])
-        
+
     if "absolute_exponential" in str(corr):
         AbsoluteExponentialKernelType =ET.SubElement(GaussianProcessModel,\
                                                 "GPAbsoluteExponentialKernelType")
         ET.SubElement(AbsoluteExponentialKernelType,"gamma",value="1")
-        ET.SubElement(AbsoluteExponentialKernelType,"noiseVariance",value="{0}".format(nugget))                                        
+        ET.SubElement(AbsoluteExponentialKernelType,"noiseVariance",value="{0}".format(nugget))
         lambda_=ET.SubElement(AbsoluteExponentialKernelType,"lambda")
         ET.SubElement(lambda_,"Array",n="{0}".format(xcol),type="real").text=theta
-        
+
     elif "squared_exponential" in str(corr):
         SquaredExponentialKernelType =ET.SubElement(GaussianProcessModel,\
                                                 "GPSquaredExponentialKernelType")
         ET.SubElement(SquaredExponentialKernelType,"gamma",value="1")
-        ET.SubElement(SquaredExponentialKernelType,"noiseVariance",value="{0}".format(nugget))                                        
+        ET.SubElement(SquaredExponentialKernelType,"noiseVariance",value="{0}".format(nugget))
         lambda_=ET.SubElement(SquaredExponentialKernelType,"lambda")
         ET.SubElement(lambda_,"Array",n="{0}".format(xcol),type="real").text=theta
 
@@ -231,7 +231,7 @@ def trans_GPDictionary(GaussianProcessModel,xrow):
     return GaussianProcessDictionary
 
 """GaussianProcessFeature"""
-def trans_GPD_feature(GaussianProcessDictionary,xcol,xrow,featureName,X,normalize,derived_featureName):   
+def trans_GPD_feature(GaussianProcessDictionary,xcol,xrow,featureName,X,normalize,derived_featureName):
     GaussianProcessFeature=ET.SubElement(GaussianProcessDictionary,"GaussianProcessFeature")
     FF=ET.SubElement(GaussianProcessFeature,"GaussianProcessFeatureFields",\
                         numberOfFields="{0}".format(xcol))
@@ -241,24 +241,24 @@ def trans_GPD_feature(GaussianProcessDictionary,xcol,xrow,featureName,X,normaliz
     else:
         for name in range(xcol):
             ET.SubElement(FF,"FieldRef",field="{0}".format(derived_featureName[name]))
-        
+
     for row in range(xrow):
         print_row=row+1
         Instance=ET.SubElement(GaussianProcessFeature,"GaussianProcessFeatureInstance",\
                            id="{0}".format(print_row))
-        
+
         Matrix=ET.SubElement(Instance,"REAL-SparseArray", n="{0}".format(xcol))
-        
+
         index="{0}".format(1)
         value="{0}".format(X[row][0])
         for i in range(1,xcol):
             index=index+" {0}".format(i+1)
             value=value+" {0}".format(X[row][i])
-            
+
         ET.SubElement(Matrix,"Indices").text=index
         ET.SubElement(Matrix,"REAL-Entries").text=value
- 
-"""GaussianProcessTarget"""    
+
+"""GaussianProcessTarget"""
 def trans_GPD_target(GaussianProcessDictionary,ycol,yrow,targetName,Y,normalize,derived_targetName):
 
     GaussianProcessTarget=ET.SubElement(GaussianProcessDictionary,"GaussianProcessTarget")
@@ -272,19 +272,19 @@ def trans_GPD_target(GaussianProcessDictionary,ycol,yrow,targetName,Y,normalize,
             ET.SubElement(TF,"FieldRef",field="{0}".format(derived_targetName[name]))
 
 
-       
+
     for row in range(yrow):
         print_row=row+1
         Instance=ET.SubElement(GaussianProcessTarget,"GaussianProcessTargetInstance",\
                            id="{0}".format(print_row))
-        
+
         Matrix=ET.SubElement(Instance,"REAL-SparseArray", n="{0}".format(ycol))
-        
+
         index="{0}".format(1)
         value="{0}".format(Y[row])
         for i in range(1,ycol):
             index=index+" {0}".format(i+1)
             value=value+" {0}".format(Y[row])
-            
+
         ET.SubElement(Matrix,"Indices").text=index
         ET.SubElement(Matrix,"REAL-Entries").text=value

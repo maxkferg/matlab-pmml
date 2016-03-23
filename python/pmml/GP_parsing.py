@@ -1,9 +1,9 @@
 import lxml.etree as ET
 import numpy as np
- 
-#------------------------------------- 
+
+#-------------------------------------
 def parse_GPM(nsp,file_name):
-    #nsp="{http://www.dmg.org/PMML-4_2}" 
+    #nsp="{http://www.dmg.org/PMML-4_2}"
     tree = ET.parse(file_name)
     root = tree.getroot()
 
@@ -25,7 +25,7 @@ def parse_name(nsp,GPM):
             featureName.append(MF_name)
         elif MF_type == "predicted":
             targetName.append(MF_name)
-            
+
     return featureName,targetName
     #parse local transformation
     #----------------------------------------------------
@@ -48,7 +48,7 @@ def parse_mean_std(nsp, GPM,len_feature,len_target):
                 norm[j]=LN.attrib["norm"]
                 orig[j]=LN.attrib["orig"]
                 j=j+1
-                
+
             m=orig[1]
             s=float(-m/norm[0])
             if i<len_feature:
@@ -58,7 +58,7 @@ def parse_mean_std(nsp, GPM,len_feature,len_target):
                 Y_mean[i-len_feature]=m
                 Y_std[i-len_feature]=s
             i=i+1;
-                
+
     return X_mean,X_std,Y_mean,Y_std
 
 def parse_kernel(nsp,GPM):
@@ -74,8 +74,8 @@ def parse_kernel(nsp,GPM):
         array=kernel.find(nsp+"lambda").find(nsp+"Array").text
         array = array.strip()
         k_lambda=[float(i) for i in array.split(" ")]
-        
-        
+
+
     kernel=GPM.find(nsp+"GPAbsoluteExponentialKernelType")
     if kernel is not None:
         kernelName="AbsoluteExponentialKernelType"
@@ -88,8 +88,8 @@ def parse_kernel(nsp,GPM):
     return kernelName,k_lambda,nugget,gamma
 
 
-def parse_coeff(nsp,GPM):    
-    #parse coefficient 
+def parse_coeff(nsp,GPM):
+    #parse coefficient
     #-------------------------------------------------
     #for GP: the coefficient is the X and Y
     Coeff=GPM.find(nsp+"GaussianProcessDictionary")
@@ -101,7 +101,7 @@ def parse_coeff(nsp,GPM):
         array_string=array.find(nsp+"REAL-Entries").text
         array_number=[float(i) for i in array_string.split(' ')]
         X.append(array_number)
-        
+
 
     #parse target (for one dimensional target)
     Y=[]
