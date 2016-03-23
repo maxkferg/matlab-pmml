@@ -11,7 +11,7 @@ pmml package contains three functions so far:
 	file_name: the name of PMML file that will be read and parsed.
 	This function will return all the GP parameters, such as lambda, noise term…
 
-3.GP_score(test_data):
+3.GP_scorer(test_data):
 	test_data: test data
 	This function will return the scoring results.
 
@@ -48,6 +48,6 @@ p.GP_translator(‘sample.xml',gp)
 # read and parse the PMML file
 p.GP_parser(‘sample.xml')
 # Score test data
-prediction=p.GP_score(X_test)
+prediction=p.GP_scorer(X_test)
 
 print prediction
