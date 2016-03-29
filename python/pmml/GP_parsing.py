@@ -14,7 +14,7 @@ def parse_GPM(nsp,file_name):
     #----------------------------------------------------------
 def parse_name(nsp,GPM):
     """parse MiningSchema"""
-    #Will get a list of target name and feature name
+    # Will get a list of target name and feature name
     MS=GPM.find(nsp+'MiningSchema')
     targetName=[]
     featureName=[]

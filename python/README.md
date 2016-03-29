@@ -34,7 +34,8 @@ import pmml
 from sklearn import gaussian_process
 
 X_train = [[1,1],[2,2],[4,4],[7,7]]
-Y_train = [1,2,4,6] X_test=[[1,3],[2,3]]
+Y_train = [1,2,4,6]
+X_test=[[1,3],[2,3]]
 nugget = 0.01
 
 # fit GP model
@@ -43,11 +44,12 @@ gp.fit(X_train, Y_train)
 
 # test
 p=pmml.GP()
+
 # write gp model into a PMML file
-p.GP_translator(‘sample.xml’,gp)
+p.GP_translator('sample.xml',gp)
 
 # read and parse the PMML file
-p.GP_parser(‘sample.xml’)
+p.GP_parser('sample.xml')
 
 # Score test data
 prediction=p.GP_scorer(X_test)
