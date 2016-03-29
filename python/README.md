@@ -1,4 +1,5 @@
-# PMML-GPR. PMML support for Gaussian Process Regression
+# PMML-GPR.
+### PMML support for Gaussian Process Regression
 
 This package will only take Gaussian process models trained by sklearn package.
 
@@ -13,7 +14,7 @@ pmml package contains three functions so far: 1. GP_translator(file_name,model):
 	file_name: the name of PMML file that will be read and parsed.
 	This function will return all the GP parameters, such as lambda, noise term…
 
-3.GP_scorer(test_data):
+3. GP_scorer(test_data):
 	test_data: test data
 	This function will return the scoring results.
 
@@ -29,7 +30,8 @@ So far, it is a preliminary package with limitation of: 1. It will not show the 
 ## Example
 
 ```python
-import pmml from sklearn import gaussian_process
+import pmml
+from sklearn import gaussian_process
 
 X_train = [[1,1],[2,2],[4,4],[7,7]]
 Y_train = [1,2,4,6] X_test=[[1,3],[2,3]]
