@@ -61,8 +61,10 @@ print prediction
 Some basic automated tests have been setup using unittest.
 Testing style is defined in the [python docs](http://docs.python-guide.org/en/latest/writing/tests/)
 
-
-
+```sh
+cd /python/pmml/tests
+nosetests --nocapture test_nist_docs.py
+```
 
 
 

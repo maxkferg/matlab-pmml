@@ -90,8 +90,6 @@ def parse_kernel(nsp,GPM):
 
 def parse_coeff(nsp,GPM):
     #parse coefficient
-    #-------------------------------------------------
-    #for GP: the coefficient is the X and Y
     Coeff=GPM.find(nsp+"GaussianProcessDictionary")
     #parse feature (for multidimensional target)
     X=[]

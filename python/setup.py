@@ -11,18 +11,22 @@ except ImportError:
     print("warning: pypandoc module not found, could not convert Markdown to RST")
     read_md = lambda f: open(f, 'r').read()
 
+packages = [
+  'lxml',
+  'numpy',
+  'datetime',
+],
+
 setup(name='pmml',
       version='0.2',
       description='A PMML translator',
       long_description=read_md('README.md'),
       url='http://github.com/storborg/pmml',
       author='EIG',
+      test_suite='tests',
       author_email='pengbo.sherry@gmail.com',
       license='EIG',
       packages=['pmml'],
-      install_requires=[
-          'lxml',
-          'numpy',
-          'datetime',
-      ],
+      install_requires=packages,
+      tests_require=packages,
       zip_safe=False)
