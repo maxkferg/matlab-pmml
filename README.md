@@ -16,7 +16,7 @@ of hyperparameters.
 ## PMML for R
 (Yet to be implimented)
 
-# Todo:
+## Todo:
 - Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
 - Update python package to PMML version 4.3
 - Pass MeanZero function to Python Scikit package
@@ -24,5 +24,5 @@ of hyperparameters.
 - Test each package with a large number of inputs
 - Support column naming (other than 'x1','x2',...)
 
-# License
+## License
 MIT

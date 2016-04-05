@@ -6,9 +6,9 @@ can be optimized using the GPML package, or directly on any `GaussianProcess` ob
 `GaussianProcess` objects can be used to generate scores for new x values, regardless of whether they
 were initialized from a PMML file, or a trained GPML model.
 
-# Creating GaussianProcess objects
+## Creating GaussianProcess objects
 
-## pmml.GaussianProcess(hyperparameters, infFunc, meanFunc, covFunc, likFunc, xTrain, yTrain);
+### pmml.GaussianProcess(hyperparameters, infFunc, meanFunc, covFunc, likFunc, xTrain, yTrain);
 Create a new GaussianProcess object from either a PMML file or input parameters.
 
 Where:
@@ -29,35 +29,35 @@ The hyp parameter should take the same form as used by the GPML package.
 * hyp.cov - parameters for the cov kernel. log([lambda1; lambda2; gamma])
 
 
-## pmml.GaussianProcess(filename);
+### pmml.GaussianProcess(filename);
 Create a new GaussianProcess object from an existing PMML file.
 This method of creating GaussianProcess objects is used to load trained models from PMML.
 
 Where:
 * filename - the path to a valid PMML filename
 
-# Object methods
+## Object methods
 Once a GaussianProcess object has been created it can be used to score new
 x values or it can be saved to a PMML file. For this section, assume that
 `p` is a valid GaussianProcess object.
 
-## p.optimize()
+### p.optimize()
 Optimize the the hyperparameters of this model, for the training
 values kernel type passed at initialization.
 
-## p.score(xNew)
+### p.score(xNew)
 Return scores for the new x values. xNew should be an m x n matrix of values
 where each row represents a test point. The method will return an m x 1
 column vector of y values (scores).
 
-## p.toPMML(filename)
+### p.toPMML(filename)
 Return the trained GPR model as valid PMML. If the optional filename
 parameter is provided, the PMML will be saved to file.
 
 
 
 
-# Example
+## Example
 
 ```matlab
     % Define valid function inputs matching the documentation example
@@ -108,15 +108,15 @@ The model can be loaded and used to score some new values.
     p.score([1,4; 2,3; 0,3])
 ```
 
-# GPML Support
+## GPML Support
 This package is designed to work flawlessly with the GPML package. GPML objects can easily be converted
 to PMML by padding it's hyperparameters to the `pmml.GaussianProcess` class.
 
-# TODO
+## TODO
 - Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
 - Test with a large number of inputs
 - Support column naming (other than 'x1','x2',...)
 
-# License
+## License
 MIT
 

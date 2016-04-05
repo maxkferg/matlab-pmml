@@ -4,9 +4,13 @@ function test_PMML()
 %   Test that the PMML class can read pmml and score new values
 %   Test that that the PMML class can score without read/writing
     clc
+    addpath(genpath('lib/gpml'));
+    addpath(genpath('test'));
+    
     testWriting();
     testReadThenScore();
     testScoring();
+    testOptimize();
 end
 
 
@@ -103,6 +107,41 @@ function testScoring()
 end
 
 
+function testOptimize()
+% Test that the GaussianProcess object can optimize it's own 
+% Hyperparameters. 
+    xTrain = [1,3; 2,6];
+    yTrain = [1; 2];
+    xNew = [1,4];
+
+    % Define mean and cov function
+    likfunc = @likGauss;
+    meanfunc = @meanZero;  % Zero mean function
+    covfunc = @covSEard;   % ARD Squared exponential cov function
+    gamma = sqrt(3);       % Realistic starting value for gamma
+    lambda1 = 2;           % Realistic starting value for lambda1
+    lambda2 = 60;          % Realistic starting value for lambda2
+
+    sn = 0.1; % sigma
+
+    hyp.lik = log(sn);
+    hyp.mean = [];
+    hyp.cov = log([lambda1; lambda2; gamma]);
+
+    % Represent the trained model as a PMML.GaussianProcess object
+    model = pmml.GaussianProcess(hyp, 'Exact', 'MeanZero', 'ARDSquaredExponentialKernel', 'Gaussian', xTrain, yTrain);
+
+    % Optimize the hyperparameters
+    hyp = model.optimize();
+    
+    % Test that the hyperparameters are correct
+    testHyperparameters(hyp);
+    
+    % Test that we are predicting the right values
+    [mu,s] = model.score(xNew);
+    testPrediction(mu,s);
+    fprintf('GP Test: testOptimize passed\n');
+end
 
 
 

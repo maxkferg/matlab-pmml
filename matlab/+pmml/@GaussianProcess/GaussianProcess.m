@@ -93,6 +93,21 @@ classdef GaussianProcess
             end
         end
         
+        
+        function hyp = optimize(self)
+            % Optimize the hyperparameters of this model
+            % Uses the training values that were supplied at initialization
+            meanfunc = self.getMeanFunc();  % Zero mean function
+            covfunc = self.getCovFunc();   % ARD Squared exponential cov function
+            likfunc = self.getLikFunc();
+            infer = self.getInferenceFunc();
+            x = self.xTrain;
+            y = self.yTrain;
+            self.hyp = minimize(self.hyp, @gp, -100, infer, meanfunc, covfunc, likfunc, x, y);
+            hyp = self.hyp;
+        end
+        
+        
         function [yPredict,sPredict] = score(self,xNew)
         % Score. Score new x values using GaussianProcess Regression
         %   @param(array)  xNew. New x values to score where each row is a test point
@@ -115,14 +130,10 @@ classdef GaussianProcess
         end
     end
     
+    
+    
     methods (Access=private)
            
-        function setup(self,hyp,inf,mean,cov,lik,x,y)
-        % Setup the GP object from common parameters
-        % Perform some simple validation on the parameters    
-
-        end
-        
         function [hyper,inf,mean,cov,lik,x,y] = fromFile(self,filename)
         % Setup the object by loading parameters from a pmml file
         % Also validates the parameters were loaded correctly
