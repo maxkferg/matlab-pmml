@@ -16,7 +16,7 @@ function testWriting()
 % Would be nice to have a xsd to test this
     expected = 'fixtures/expected.pmml';
     filename = 'fixtures/output.pmml';
-    
+
     % Define valid function inputs matching the documentation example
     % The hyperparameters are defined in the same way that gpml returns them
     % This make the PMML package easier to use with gpml, but requires the
@@ -30,11 +30,11 @@ function testWriting()
     likfunc = 'Gaussian';
     inffunc = 'Exact';
     xTrain = [1,3; 2,6];
-    yTrain = [1; 2]; 
-    
+    yTrain = [1; 2];
+
     p = pmml.GaussianProcess(hyp, inffunc, meanfunc, covfunc, likfunc, xTrain, yTrain);
     p.toPMML(filename);
-   
+
     % Compare output to expected output
     expect = fopen(expected);
     actual = fopen(filename);
@@ -56,13 +56,13 @@ function testReadThenScore()
 % Test that the PMML class can read pmml and score new values
     xNew = [1,4];
     filename = 'fixtures/expected.pmml';
-    
+
     % Load model from PMML file
-    model = pmml.GaussianProcess(filename);    
-    
+    model = pmml.GaussianProcess(filename);
+
     % Score the example values
     [mu,s] = model.score(xNew);
-    
+
     testPrediction(mu,s);
     fprintf('GP Test: testScoring passed\n');
 end
@@ -73,9 +73,9 @@ function testScoring()
 % Test that that the PMML class can score without read/writing
 % Complete the nist example using the gpml package
     xTrain = [1,3; 2,6];
-    yTrain = [1; 2]; 
+    yTrain = [1; 2];
     xNew = [1,4];
-    
+
     % Define mean and cov function
     likfunc = @likGauss;
     meanfunc = @meanZero;  % Zero mean function
@@ -83,19 +83,19 @@ function testScoring()
     gamma = sqrt(3);       % Realistic starting value for gamma
     lambda1 = 2;           % Realistic starting value for lambda1
     lambda2 = 60;          % Realistic starting value for lambda2
-    
+
     sn = 0.1; % sigma
-    
+
     hyp.lik = log(sn);
     hyp.mean = [];
     hyp.cov = log([lambda1; lambda2; gamma]);
 
     % Optimize hyperparameters
     hyp = minimize(hyp, @gp, -100, @infExact, meanfunc, covfunc, likfunc, xTrain, yTrain);
-    
+
     % Represent the trained model as a PMML.GaussianProcess object
     model = pmml.GaussianProcess(hyp, 'Exact', 'MeanZero', 'ARDSquaredExponentialKernel', 'Gaussian', xTrain, yTrain);
-    
+
     % Test that we are predicting the right values
     [mu,s] = model.score(xNew);
     testPrediction(mu,s);
