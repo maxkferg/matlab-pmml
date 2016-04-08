@@ -4,7 +4,7 @@ trained Gaussian Process Regression models to PMML. The API is reasonably consis
 across all three languanges, but is adapted to the style conventions of each language.
 
 ## PMML for Matlab
-This package allows trained GPR models to be save to PMML and loaded again.
+This package allows trained GPR models to be saved to PMML and loaded again.
 Internally this package uses the GPML package for scoring and optimization
 of hyperparameters. See the Matlab folder for full documentation.
 
