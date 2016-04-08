@@ -94,7 +94,7 @@ parameter is provided, the PMML will be saved to file.
     % Save the pmml model
     p.toPMML('output.pmml');
 ```
-The GPR model and training points are now save in the PMML format.
+The GPR model and training points are now saved in the PMML format.
 The model can be loaded and used to score some new values.
 
 ```matlab
