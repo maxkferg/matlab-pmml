@@ -5,6 +5,8 @@ function K = covSEard(hyp, x, z, i)
 %
 % k(x^p,x^q) = sf^2 * exp(-(x^p - x^q)'*inv(P)*(x^p - x^q)/2)
 %
+% length_scale = ln(sf^2)*[1/ell1^2, 1/ell2^2]
+%
 % where the P matrix is diagonal with ARD parameters ell_1^2,...,ell_D^2, where
 % D is the dimension of the input space and sf2 is the signal variance. The
 % hyperparameters are:

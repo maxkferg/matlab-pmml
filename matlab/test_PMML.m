@@ -6,7 +6,6 @@ function test_PMML()
     clc
     addpath(genpath('lib/gpml'));
     addpath(genpath('test'));
-    
     testWriting();
     testReadThenScore();
     testScoring();
@@ -108,8 +107,8 @@ end
 
 
 function testOptimize()
-% Test that the GaussianProcess object can optimize it's own 
-% Hyperparameters. 
+% Test that the GaussianProcess object can optimize it's own
+% Hyperparameters.
     xTrain = [1,3; 2,6];
     yTrain = [1; 2];
     xNew = [1,4];
