@@ -8,7 +8,7 @@ were initialized from a PMML file, or a trained GPML model.
 
 ## Creating GaussianProcess objects
 
-### pmml.GaussianProcess(hyperparameters, infFunc, meanFunc, covFunc, likFunc, xTrain, yTrain);
+### pmml.GaussianProcess(hyperparameters, infFunc, meanFunc, covFunc, likFunc, xTrain, yTrain)
 Create a new GaussianProcess object from either a PMML file or input parameters.
 
 Where:
@@ -29,7 +29,7 @@ The hyp parameter should take the same form as used by the GPML package.
 * hyp.cov - parameters for the cov kernel. log([lambda1; lambda2; gamma])
 
 
-### pmml.GaussianProcess(filename);
+### pmml.GaussianProcess(filename)
 Create a new GaussianProcess object from an existing PMML file.
 This method of creating GaussianProcess objects is used to load trained models from PMML.
 
