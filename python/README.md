@@ -8,11 +8,11 @@ were initialized from a PMML file, or a trained GPML model.
 
 ## Creating GaussianProcessModel objects
 
-### GaussianProcessModel(<GaussianProcessRegressor>)
+### GaussianProcessModel(GaussianProcessRegressor)
 Create a new GaussianProcess object from an trained Scikit GPR Model
 
 Where:
-* <GaussianProcessRegressor> is a trained GaussianProcessRegressor object from the sklearn.gaussian_process package.
+* GaussianProcessRegressor is a trained GaussianProcessRegressor object from the sklearn.gaussian_process package.
 
 Right now we assume that the GaussianProcessRegressor uses a ARDSquaredExponentialKernel. This needs to be tidied up at some stage; We probably need to write separate classes to represent each of the four allowable Kernals [RadialBasisKernel,ARDSquaredExponentialKernel,AbsoluteExponentialKernel,GeneralizedExponentialKernel]
 
@@ -82,7 +82,7 @@ The model can be loaded and used to score some new values.
     self.assertAlmostEqual(mu, 1.0095, places=4)
     self.assertAlmostEqual(s**2, 0.0226,  places=4)
 
-    # Score multiple trianing points
+    # Score multiple training points
     xPoints = np.array([1,4],[2,3],[4,5])
     p.score(xPoints)
 ```
