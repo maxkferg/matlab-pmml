@@ -1,72 +1,100 @@
-# PMML-GPR.
-### PMML support for Gaussian Process Regression
+# Gaussian Process Regression PMML Support for Python
 
-This package will only take Gaussian process models trained by sklearn package.
+Save and load a trained Gaussian Process regression (GPR) model to/from PMML. This package exposes the
+`pmml.gausian_process.GaussianProcessModel` class which is used to represent a trained GPR model. The model hyperparameters
+can be optimized using the SciKit package, or directly on any `GaussianProcessModel` object (TODO).
+`GaussianProcessModel` objects can be used to generate scores for new x values, regardless of whether they
+were initialized from a PMML file, or a trained GPML model.
 
-pmml package contains three functions so far: 1. GP_translator(file_name,model): file_name: the PMML file will saved in file_name model: a trained GP model This function will not return anything
+## Creating GaussianProcessModel objects
 
-1. GP_translator(file_name,model):
-	file_name: the PMML file will saved in file_name
-	model: a trained GP model
-	This function will not return anything
+### GaussianProcessModel(<GaussianProcessRegressor>)
+Create a new GaussianProcess object from an trained Scikit GPR Model
 
-2. GP_parser(file_name):
-	file_name: the name of PMML file that will be read and parsed.
-	This function will return all the GP parameters, such as lambda, noise term…
+Where:
+* <GaussianProcessRegressor> is a trained GaussianProcessRegressor object from the sklearn.gaussian_process package.
 
-3. GP_scorer(test_data):
-	test_data: test data
-	This function will return the scoring results.
+Right now we assume that the GaussianProcessRegressor uses a ARDSquaredExponentialKernel. This needs to be tidied up at some stage; We probably need to write separate classes to represent each of the four allowable Kernals [RadialBasisKernel,ARDSquaredExponentialKernel,AbsoluteExponentialKernel,GeneralizedExponentialKernel]
 
-So far, it is a preliminary package with limitation of: 1. It will not show the error when users use it in a wrong way, for example: user passed a wrong model.
+### GaussianProcessModel(filename)
+Create a new GaussianProcessModel object from an existing PMML file.
+This method of creating GaussianProcess objects is used to load trained models from PMML.
 
-1.  As sklearn package will only operate on numerical matrix, which is pre-processed matrix only contains number, there are some functions in PMML will not be needed, such as:
-    The GP_translator is able to automatically generate PMML file from a Gaussian process model, which contains: a Header, Datadictionary, Gaussian Process Model, Mining schema, output, LocalTransformations, kernel type, and GaussianProcessDictionary.
+Where:
+* filename - the path to a valid PMML filename
 
-2.  As there is only one type of output, the output form is fixed.
+## Object methods
+Once a GaussianProcess object has been created it can be used to score new
+x values or it can be saved to a PMML file. For this section, assume that
+`p` is a valid GaussianProcess object.
 
-3.  As the sklearn package for Gaussian Process only uses normalization, only the normalized transformation is included in this translator.
+### p.score(xNew)
+Return scores for the new x values. xNew should be an m x n matrix of values
+where each row represents a test point. The method will return an m x 1
+column vector of y values (scores).
+
+### p.toPMML(filename)
+Return the trained GPR model as valid PMML. If the optional filename
+parameter is provided, the PMML will be saved to file.
 
 ## Example
 
 ```python
-import pmml
-from sklearn import gaussian_process
+    import sys
+    import numpy as np
+    from pmml.gaussian_process import GaussianProcessModel
+    from sklearn.gaussian_process import GaussianProcessRegressor
+    from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
-X_train = [[1,1],[2,2],[4,4],[7,7]]
-Y_train = [1,2,4,6]
-X_test=[[1,3],[2,3]]
-nugget = 0.01
+    # Define valid function inputs matching the NIST documentation example
+    # The hyperparameters are defined in the same way that gpml returns them
+    # This make the PMML package easier to use with gpml, but requires the
+    # PMML package to make conversions internally
+    filename = 'output.pmml'
+    xTrain = np.array([[1,3],[2,6]])
+    yTrain = np.array([[1],[2]])
+    xNew = atleast_2d([1,4])
 
-# fit GP model
-gp = gaussian_process.GaussianProcess(theta0=[0.1,0.1],nugget=nugget)
-gp.fit(X_train, Y_train)
+    # Train a GP model and save to PMML
+    hyp = [1,59]
+    s = 0.1;
+    k = 1.0 * RBF(hyp) + WhiteKernel(noise_level=s**2, noise_level_bounds=(1e-3,1))
+    gp = GaussianProcessRegressor(kernel=k, n_restarts_optimizer=0)
+    gp.fit(xTrain, yTrain)
+    p = GaussianProcessModel(gp);
 
-# test
-p=pmml.GP()
+    # Score some values
+    [mu,s] = p.score(xNew);
+    self.assertAlmostEqual(mu, 1.0095, places=4)
+    self.assertAlmostEqual(s**2, 0.0226,  places=4)
 
-# write gp model into a PMML file
-p.GP_translator('sample.xml',gp)
+    # Save the model to PMML
+    p.toPMML(filename)
+```
+The GPR model and training points are now saved in the PMML format.
+The model can be loaded and used to score some new values.
 
-# read and parse the PMML file
-p.GP_parser('sample.xml')
+```python
+    # Load from pmml and predict
+    xNew = np.atleast_2d([1,4])
+    p = GaussianProcessModel(filename)
+    [mu,s] = p.score(xNew);
+    self.assertAlmostEqual(mu, 1.0095, places=4)
+    self.assertAlmostEqual(s**2, 0.0226,  places=4)
 
-# Score test data
-prediction=p.GP_scorer(X_test)
-
-print prediction
+    # Score multiple trianing points
+    xPoints = np.array([1,4],[2,3],[4,5])
+    p.score(xPoints)
 ```
 
-## Testing
-Some basic automated tests have been setup using unittest.
-Testing style is defined in the [python docs](http://docs.python-guide.org/en/latest/writing/tests/)
+## Requirements
+This package uses the relatively new GaussianProcessRegressor class from scikit. This class is available in the [0.18.dev0 version](https://github.com/scikit-learn/scikit-learn) of scikit.
 
-```sh
-cd /python/pmml/tests
-nosetests --nocapture test_nist_docs.py
-```
+## TODO
+- Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
+- Test with a large number of inputs
+- Support column naming (other than 'x1','x2',...)
 
-
-
-
+## License
+MIT
 
