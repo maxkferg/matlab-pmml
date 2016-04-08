@@ -16,10 +16,9 @@ of hyperparameters.
 ## PMML for R
 (Yet to be implimented)
 
-## Todo:
-- Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
-- Update python package to PMML version 4.3
-- Pass MeanZero function to Python Scikit package
+## Todo
+- Support 'AbsoluteExponentialKernel' 'GeneralizedExponentialKernel'
+- Support for more than 2 feature dimensions in Matlab package
 - Impliment R package
 - Test each package with a large number of inputs
 - Support column naming (other than 'x1','x2',...)
