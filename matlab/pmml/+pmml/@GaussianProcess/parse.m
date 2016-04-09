@@ -2,30 +2,29 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
 % Parse. Parse a PMML file and return the GPR parameters
 %    This function returns the hyperparameters in the same form that
 %    is used by the GPML package.
-%     
+%
 %    @param{String} filename. The filepath to the PMML file
-%    @param{Struct} hyp. The hyperparameters in the form used by GPML 
-%    @output{String} infFunc. The name of the inference function [Exact] 
+%    @param{Struct} hyp. The hyperparameters in the form used by GPML
+%    @output{String} infFunc. The name of the inference function [Exact]
 %    @output{String} meanFunc. The name of the mean kernel function [MeanZero]
 %    @output{String} covFunc. The name of the kernel as defined by the PMML spec
 %    @output{String} likFunc. The name of the likilihood function [Gaussian]
 %    @output{Matrix} x. An m by n matrix containing x training values
-%    @output{Matrix} y. An m by 1 column vector containing y values 
+%    @output{Matrix} y. An m by 1 column vector containing y values
 
     GPMODEL_TAG = 'gaussianprocessmodel';
     TRAINING_TAG = 'traininginstances';
     KERNEL_TAG = 'ardsquaredexponentialkernel';
     INSTANCE_TAG = 'instancefields';
     INLINE_TABLE = 'inlinetable';
-    
+
     document = parseXML(filename);
     model = getChild(document,GPMODEL_TAG);
     kernalSchema = getChild(model,KERNEL_TAG);
     trainingSchema = getChild(model,TRAINING_TAG);
     instanceFields = getChild(trainingSchema,INSTANCE_TAG);
     inlineTable = getChild(trainingSchema,INLINE_TABLE);
-    
-    
+
     % We need to allocate a table for the training values
     % We assign the correct column names and initialize the values to zero
     % Eventually we will be able to support different feature labels
@@ -36,7 +35,7 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
         records(:,i) = table(zeros(nrows,1));
         records.Properties.VariableNames{i} = getAttribute(columns(i),'field');
     end
-    
+
     % Populate the training values
     rows = getValidChildren(inlineTable);
     for i=1:length(rows)
@@ -47,29 +46,29 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
             records(i,label) = table(value);
         end
     end
-    
+
     % Split the table into x and y values
     x = table2array(records(:,1:end-1));
     y = table2array(records(:,end));
-       
+
     % Populate the hyperparameters
     gamma = getAttribute(kernalSchema,'gamma','double');
     noise = getAttribute(kernalSchema,'noisevariance','double');
     lambdaArray = getChild(getChild(kernalSchema,'lambda'),'array');
     n = getAttribute(lambdaArray,'n','int');
     lambda = parseArray(lambdaArray.Children.Data,n);
-    
+
     % Create the hyperparameter object accroding to the GPML spec
     hyp.mean = [];
     hyp.lik = log(sqrt(noise));
     hyp.cov = [log(lambda) log(sqrt(gamma))];
-    
+
     % Set the functions to their default values
     meanFunc = 'MeanZero';
     infFunc = 'Exact';
     covFunc = 'ARDSquaredExponentialKernel';
     likFunc = 'Gaussian';
-    
+
     % Make sure that the parameters were loaded correctly
     validateParameters(hyp, infFunc, meanFunc, covFunc, likFunc, x, y);
 end
@@ -77,7 +76,7 @@ end
 
 
 function validateParameters(hyp, infFunc, meanFunc, covFunc, likFunc, x, y)
-% Perform some simple validation to ensure that the parametes were
+% Perform some simple validation to ensure that the parameters were
 % loaded correctly. Throw an error on failure
     if length(hyp.cov)~=3
         error('There should be 3 kernal parameters, not %i',length(hyp.cov));
@@ -118,7 +117,7 @@ function document = parseXML(filename)
        error('Failed to read XML file %s.',filename);
     end
 
-    % Recurse over child nodes. This could run into problems 
+    % Recurse over child nodes. This could run into problems
     % with very deeply nested trees.
     try
        document = parseChildNodes(tree);
@@ -126,8 +125,8 @@ function document = parseXML(filename)
        error('Unable to parse XML file %s.',filename);
     end
 end
-     
-        
+
+
 function children = parseChildNodes(theNode)
 % Return a multi-element struct containing children on this node.
 % Each child will be in the form described by makeStructFromNode
@@ -163,7 +162,7 @@ function nodeStruct = makeStructFromNode(theNode)
        'Children', parseChildNodes(theNode));
 
     if any(strcmp(methods(theNode), 'getData'))
-       nodeStruct.Data = char(theNode.getData); 
+       nodeStruct.Data = char(theNode.getData);
     else
        nodeStruct.Data = '';
     end
@@ -191,9 +190,9 @@ end
 
 function array=parseArray(strArray,n)
 % Parse a space-separated numerical array
-% Return a row vector of floats. 
+% Return a row vector of floats.
 % @param{String} strArray. A string containing only spaces and numeric characters
-% @param{Int} n. The expected number of elements in the array 
+% @param{Int} n. The expected number of elements in the array
     next = '';
     position = 1;
     array = zeros(1,n);
@@ -208,14 +207,14 @@ function array=parseArray(strArray,n)
     end
     % We also need to parse the last value
     array(position) = str2double(next);
-            
-    % Simple sanity check to make sure everything went smoothly 
+
+    % Simple sanity check to make sure everything went smoothly
     if length(array)~=n;
         error('The number of elements in the array did not match n')
     end
 end
-    
-    
+
+
 function value=getAttribute(element,attributeName,type)
 % Return the value of element.@attribute
 %   @param{Struct} element. The DOM element as a struct
@@ -251,8 +250,8 @@ function child=getChild(parent,name)
     end
     error('Could not find element %s',name);
 end
-           
-           
+
+
 
 function children=getChildren(parent,tagName)
 % Get all children nodes that matches a certain tagName
@@ -279,5 +278,3 @@ function children=getValidChildren(parent)
     end
 end
 
-    
-    
