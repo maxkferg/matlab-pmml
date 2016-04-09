@@ -13,7 +13,6 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
 %    @output{Matrix} y. An m by 1 column vector containing y values 
 
     GPMODEL_TAG = 'gaussianprocessmodel';
-    %MINING_TAG = 'miningschema';
     TRAINING_TAG = 'traininginstances';
     KERNEL_TAG = 'ardsquaredexponentialkernel';
     INSTANCE_TAG = 'instancefields';
@@ -21,7 +20,6 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     
     document = parseXML(filename);
     model = getChild(document,GPMODEL_TAG);
-    %miningSchema = getChild(model,MINING_TAG);
     kernalSchema = getChild(model,KERNEL_TAG);
     trainingSchema = getChild(model,TRAINING_TAG);
     instanceFields = getChild(trainingSchema,INSTANCE_TAG);

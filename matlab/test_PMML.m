@@ -3,9 +3,10 @@ function test_PMML()
 %   Test that the PMML class can create valid PMML
 %   Test that the PMML class can read pmml and score new values
 %   Test that that the PMML class can score without read/writing
-    clc
-    addpath(genpath('lib/gpml'));
+    clear all; clc;
+    addpath(genpath('lib'));
     addpath(genpath('test'));
+     
     testWriting();
     testReadThenScore();
     testScoring();
@@ -17,8 +18,8 @@ end
 function testWriting()
 % Test that the PMML class can create valid PMML
 % Would be nice to have a xsd to test this
-    expected = 'fixtures/expected.pmml';
-    filename = 'fixtures/output.pmml';
+    expected = 'test/fixtures/expected.pmml';
+    filename = 'test/fixtures/output.pmml';
 
     % Define valid function inputs matching the documentation example
     % The hyperparameters are defined in the same way that gpml returns them
@@ -58,7 +59,7 @@ end
 function testReadThenScore()
 % Test that the PMML class can read pmml and score new values
     xNew = [1,4];
-    filename = 'fixtures/expected.pmml';
+    filename = 'test/fixtures/expected.pmml';
 
     % Load model from PMML file
     model = pmml.GaussianProcess(filename);
