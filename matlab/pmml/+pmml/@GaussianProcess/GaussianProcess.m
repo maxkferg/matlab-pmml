@@ -1,4 +1,4 @@
-classdef GaussianProcess
+classdef GaussianProcess < handle
 % GaussianProcess. Gaussian Process Regression model for PMML package
 %   This object represents a trained GPR model. It can be saved to a PMML
 %   file using the toPMML() method. A similar object can be created from
@@ -10,7 +10,7 @@ classdef GaussianProcess
     
    
     properties (Access=public)
-        hyp;            % Struct containing hyperparameters
+        hyp;  % Struct containing hyperparameters
     end
     
     properties (Access=private)
@@ -94,19 +94,23 @@ classdef GaussianProcess
         end
         
         
-        function hyp = optimize(self)
+        function hyp = optimize(self,n)
             % Optimize the hyperparameters of this model
             % Uses the training values that were supplied at initialization
+            % @param{int} n. The maximum number of optimization steps
+            if (nargin<2)
+                n = -100;
+            end     
             meanfunc = self.getMeanFunc();  % Zero mean function
             covfunc = self.getCovFunc();   % ARD Squared exponential cov function
             likfunc = self.getLikFunc();
             infer = self.getInferenceFunc();
             x = self.xTrain;
             y = self.yTrain;
-            self.hyp = minimize(self.hyp, @gp, -100, infer, meanfunc, covfunc, likfunc, x, y);
-            hyp = self.hyp;
+            hyp = minimize(self.hyp, @gp, n, infer, meanfunc, covfunc, likfunc, x, y);
+            self.hyp = hyp;
         end
-        
+       
         
         function [yPredict,sPredict] = score(self,xNew)
         % Score. Score new x values using GaussianProcess Regression
@@ -127,6 +131,32 @@ classdef GaussianProcess
             x = self.xTrain;
             y = self.yTrain;
             [yPredict,sPredict] = gp(self.hyp, infer, meanfunc, covfunc, likfunc, x, y, xNew);
+        end
+
+        
+        function gridSearch(self,hyp,xParam,xRange,yParam,yRange)
+        % Perform a grid search over the covariance hyperparameters and 
+        % plot the results
+        % @param{Int} xParam. The index of the hyp.cov parameter to change
+        % @param{Array} xRange. The range of values to try
+        % @param{Int} yParam. The index of the hyp.cov parameter to change
+        % @param{Array} yRange. The range of values to try     
+            meanfunc = self.getMeanFunc();
+            covfunc = self.getCovFunc();
+            likfunc = self.getLikFunc();
+            infer = self.getInferenceFunc();
+            x = linspace(xRange(1),xRange(2),100);
+            y = linspace(yRange(1),yRange(2),100);
+            r = zeros(length(x),length(y));
+            for i=1:length(x)
+                for j=1:length(y)
+                    hyp.cov(xParam) = x(i);
+                    hyp.cov(yParam) = y(j);
+                    r(i,j) = gp(hyp, infer, meanfunc, covfunc, likfunc, self.xTrain, self.yTrain);
+                end
+            end
+            contour(x,y,r);
+            colorbar;
         end
     end
     
