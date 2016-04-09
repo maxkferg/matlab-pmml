@@ -1,10 +1,10 @@
 function pmml = translate(self)
-% Translate. Translate hyperparameters to valid GPR PMML 
+% Translate. Translate hyperparameters to valid GPR PMML
 %   Return PMML as a string
     rootTag = 'pmml';
     xmlns = 'http://www.dmg.org/PMML-4_3';
-    version='4.3'; 
-    document = com.mathworks.xml.XMLUtils.createDocument(rootTag); 
+    version='4.3';
+    document = com.mathworks.xml.XMLUtils.createDocument(rootTag);
     pmmlElement = document.getDocumentElement;
     pmmlElement.setAttribute('xmlns',xmlns);
     pmmlElement.setAttribute('version',version);
@@ -108,17 +108,17 @@ function writeKernelSection(self,document,parent)
     lambda = exp(self.hyp.cov(1:end-1));
     lambdaArray = sprintf(' %f',lambda);
     lambdaArray = lambdaArray(2:end);
-    
+
     kernelNode = document.createElement(kernel);
     lambdaNode = document.createElement('lambda');
     arrayNode = document.createElement('array');
-    
+
     kernelNode.setAttribute('gamma',num2str(gamma));
     kernelNode.setAttribute('noisevariance',num2str(noise)); % Todao set NV term
     arrayNode.setAttribute('n',num2str(length(lambda)));
     arrayNode.setAttribute('type','real');
     arrayNode.setTextContent(lambdaArray);
-    
+
     lambdaNode.appendChild(arrayNode);
     kernelNode.appendChild(lambdaNode);
     parent.appendChild(kernelNode);
@@ -128,15 +128,15 @@ end
 function writeTrainingInstances(self,document,parent)
     % Write the <traininginstances> wrapper
     % This section wraps the instanceField (description) and inlinetable (data)
-    nRows = size(self.xTrain,2); 
-    nCols = size(self.xTrain,1)+size(self.yTrain,2);
-    trainingInstances = document.createElement('traininginstances');   
+    nRows = size(self.xTrain,1);
+    nCols = size(self.xTrain,2)+size(self.yTrain,2);
+    trainingInstances = document.createElement('traininginstances');
     trainingInstances.setAttribute('recordcount',num2str(nRows));
     trainingInstances.setAttribute('fieldcount',num2str(nCols));
     trainingInstances.setAttribute('istransformed','false');
     % Write nested fields
     writeInstanceFields(self,document,trainingInstances);
-    writeInlineTable(self,document,trainingInstances); 
+    writeInlineTable(self,document,trainingInstances);
     parent.appendChild(trainingInstances);
 end
 
@@ -185,7 +185,7 @@ function writeInlineTable(self,document,parent)
         end
         wrapper.appendChild(rowElement);
     end
-    parent.appendChild(wrapper);  
+    parent.appendChild(wrapper);
 end
 
 

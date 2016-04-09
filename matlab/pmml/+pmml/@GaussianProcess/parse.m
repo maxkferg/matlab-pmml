@@ -78,7 +78,8 @@ end
 function validateParameters(hyp, infFunc, meanFunc, covFunc, likFunc, x, y)
 % Perform some simple validation to ensure that the parameters were
 % loaded correctly. Throw an error on failure
-    if length(hyp.cov)~=3
+    nparameters = size(x,2)+1;
+    if length(hyp.cov)~=nparameters
         error('There should be 3 kernal parameters, not %i',length(hyp.cov));
     end
     if length(hyp.lik)~=1
