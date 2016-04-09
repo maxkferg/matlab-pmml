@@ -163,7 +163,7 @@ end
 
 function writeInlineTable(self,document,parent)
     % Write <inlinetable> section that contains the training data
-    nRows = size(self.xTrain,2); 
+    nRows = size(self.xTrain,1);
     wrapper = document.createElement('inlinetable');
     for row=1:nRows
         rowElement = document.createElement('row');
