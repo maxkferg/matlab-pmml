@@ -122,7 +122,7 @@ function testOptimize()
     lambda1 = 2;           % Realistic starting value for lambda1
     lambda2 = 60;          % Realistic starting value for lambda2
 
-    sn = 0.1; % sigma
+    sn = 0.105; % sigma
 
     hyp.lik = log(sn);
     hyp.mean = [];
@@ -142,7 +142,6 @@ function testOptimize()
     testPrediction(mu,s);
     fprintf('GP Test: testOptimize passed\n');
 end
-
 
 
 

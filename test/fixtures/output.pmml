@@ -16,9 +16,9 @@
          <outputfield datatype="double" feature="predictedValue" name="MeanValue" optype="continuous"/>
          <outputfield datatype="double" feature="predictedValue" name="StandardDeviation" optype="continuous"/>
       </output>
-      <ardsquaredexponentialkernel gamma="2.489" noisevariance="0.011046">
+      <ardsquaredexponentialkernel gamma="2.4888" noisevariance="0.011184">
          <lambda>
-            <array n="2" type="real">1.516419 59.311304</array>
+            <array n="2" type="real">1.516532 59.846961</array>
          </lambda>
       </ardsquaredexponentialkernel>
       <traininginstances fieldcount="3" istransformed="false" recordcount="2">

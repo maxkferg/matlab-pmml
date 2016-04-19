@@ -8,7 +8,7 @@ function example()
 
     % Define valid function inputs matching the documentation example
     % The hyperparameters are defined in the same way that gpml returns them
-    sn = 0.1; lambda1=1.5; lambda2=60; gamma=sqrt(2);
+    sn = 0.105; lambda1=2; lambda2=60; gamma=sqrt(3);
     hyp.lik = log(sn);
     hyp.mean = [];
     hyp.cov = log([lambda1; lambda2; gamma]);
@@ -23,6 +23,11 @@ function example()
     p = pmml.GaussianProcess(hyp, inffunc, meanfunc, covfunc, likfunc, xTrain, yTrain);
     p.optimize(-100);
     
+    % Print new hyperparams
+    disp(p.hyp);
+    disp(exp(p.hyp.lik))
+    disp(exp(p.hyp.cov));
+    
     % Write the model to a PMML file
     p.toPMML(filename);
 
@@ -33,9 +38,13 @@ function example()
     xNew = [1,4];
 
     % Score the example values
-    [mu,s] = model.score(xNew);
-
-    testPrediction(mu,s);
-    fprintf('GP Test: testScoring passed\n');
+    [mu,s] = model.score(xNew)
+    
+    % This function tests that the output matches the output of the example
+    % provided in the GP PMML documentation. Only uncomment this test if 
+    % you are using the same xTrain, yTrain and xNew values as the documented example.
+    % testHyperparameters(p.hyp);
+    % testPrediction(mu,s);
+    fprintf('GP example test: complete\n');
 end
 
