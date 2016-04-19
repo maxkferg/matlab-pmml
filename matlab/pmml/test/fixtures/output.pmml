@@ -18,7 +18,7 @@
       </output>
       <ardsquaredexponentialkernel gamma="2.489" noisevariance="0.011046">
          <lambda>
-            <array n="2" type="real">1.516400 59.311300</array>
+            <array n="2" type="real">1.516419 59.311304</array>
          </lambda>
       </ardsquaredexponentialkernel>
       <traininginstances fieldcount="3" istransformed="false" recordcount="2">
