@@ -8,7 +8,7 @@ function example()
 
     % Define valid function inputs matching the documentation example
     % The hyperparameters are defined in the same way that gpml returns them
-    sn = 0.1051; lambda1=1.5164; lambda2=59.3113; gamma=sqrt(2.4890);
+    sn = 0.1; lambda1=1.5; lambda2=60; gamma=sqrt(2);
     hyp.lik = log(sn);
     hyp.mean = [];
     hyp.cov = log([lambda1; lambda2; gamma]);
