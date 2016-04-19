@@ -16,15 +16,16 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     TRAINING_TAG = 'traininginstances';
     KERNEL_TAG = 'ardsquaredexponentialkernel';
     INSTANCE_TAG = 'instancefields';
-    INLINE_TABLE = 'inlinetable';
 
-    document = parseXML(filename);
+    fprintf('Loading xml file\n')
+    tree = xmlread(filename);
+   
+    document = parseXML(tree);
     model = getChild(document,GPMODEL_TAG);
     kernalSchema = getChild(model,KERNEL_TAG);
     trainingSchema = getChild(model,TRAINING_TAG);
     instanceFields = getChild(trainingSchema,INSTANCE_TAG);
-    inlineTable = getChild(trainingSchema,INLINE_TABLE);
-
+        
     % We need to allocate a table for the training values
     % We assign the correct column names and initialize the values to zero
     % Eventually we will be able to support different feature labels
@@ -37,21 +38,12 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     end
 
     % Populate the training values
-    rows = getValidChildren(inlineTable);
-    for i=1:length(rows)
-        columns = getValidChildren(rows(i));
-        for j=1:length(columns)
-            label = columns(j).Name;
-            value = str2double(columns(j).Children.Data);
-            records(i,label) = table(value);
-        end
-    end
-
-    % Split the table into x and y values
+    records = getTrainingSet(tree,records);
     x = table2array(records(:,1:end-1));
     y = table2array(records(:,end));
 
     % Populate the hyperparameters
+    fprintf('Populating hyperparams\n')
     gamma = getAttribute(kernalSchema,'gamma','double');
     noise = getAttribute(kernalSchema,'noisevariance','double');
     lambdaArray = getChild(getChild(kernalSchema,'lambda'),'array');
@@ -70,6 +62,7 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     likFunc = 'Gaussian';
 
     % Make sure that the parameters were loaded correctly
+    fprintf('Validating hyperparams\n')
     validateParameters(hyp, infFunc, meanFunc, covFunc, likFunc, x, y);
 end
 
@@ -103,27 +96,59 @@ function validateParameters(hyp, infFunc, meanFunc, covFunc, likFunc, x, y)
     if isempty(y)
         error('Training values (y) are missing');
     end
-    if size(x,2)==size(y,2)
+    if size(x,1)~=size(y,1)
         error('Different number of x and y training pairs');
     end
 end
 
 
-
-function document = parseXML(filename)
-% PARSEXML Convert XML file to a MATLAB structure.
-    try
-       tree = xmlread(filename);
-    catch
-       error('Failed to read XML file %s.',filename);
+function records = getTrainingSet(document,records)
+% Return the training set as a Matlab Table
+% This code is performance critical, so it uses the Java xpath library
+    % Create an XPath expression.
+    fprintf('Loading training set\n')
+    nodeList = getXPath(document,'pmml/gaussianprocessmodel/traininginstances/inlinetable/row');
+    
+    % Iterate through the nodes that are returned.
+    values = zeros(size(records));
+    for i=1:nodeList.getLength
+        row = nodeList.item(i-1);
+        colnames = records.Properties.VariableNames;
+        for j=1:length(colnames)
+            colname = colnames{j};
+            column = row.getElementsByTagName(colname).item(0);
+            values(i,j) = str2double(column.getTextContent());
+        end
     end
+    % Update the table in bulk for efficientcy
+    records(:,:) = array2table(values);
+    fprintf('Finished loading training set\n')
+end
 
+
+function nodeList = getXPath(document,path)
+% Get nodelist matching xpath. 
+% Use name() matching to avoid issues with namespaces
+    import javax.xml.xpath.*
+    factory = XPathFactory.newInstance;
+    xpath = factory.newXPath;
+    % Use name selectors
+    parts = strsplit(path,'/');
+    path = strjoin(parts,'"]/*[name()="');
+    path = ['/*[name()="',path,'"]'];
+    expression = xpath.compile(path);
+    nodeList = expression.evaluate(document,XPathConstants.NODESET);
+end
+
+
+function document = parseXML(tree)
+% PARSEXML Convert XML file to a MATLAB structure.
     % Recurse over child nodes. This could run into problems
     % with very deeply nested trees.
     try
        document = parseChildNodes(tree);
     catch
-       error('Unable to parse XML file %s.',filename);
+       error('Unable to parse XML file');
     end
 end
 
@@ -132,6 +157,12 @@ function children = parseChildNodes(theNode)
 % Return a multi-element struct containing children on this node.
 % Each child will be in the form described by makeStructFromNode
     children = [];
+    
+    % For performance reasons we do not parse the table
+    if strcmp(theNode.getNodeName,'inlinetable')
+       return 
+    end
+    
     if theNode.hasChildNodes
         childNodes = theNode.getChildNodes;
         numChildNodes = childNodes.getLength;
@@ -265,17 +296,3 @@ function children=getChildren(parent,tagName)
         end
     end
 end
-
-function children=getValidChildren(parent)
-% Get all children nodes, excluding text nodes
-% Return an empty struct if there are no matching children
-    ignore = '#text';
-    children = parent.Children;
-    for i=length(parent.Children):-1:1
-        candidate = parent.Children(i);
-        if (strcmp(candidate.Name,ignore))
-            children(i) = [];
-        end
-    end
-end
-
