@@ -114,7 +114,6 @@ to PMML by padding it's hyperparameters to the `pmml.GaussianProcess` class.
 
 ## TODO
 - Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
-- Test with a large number of inputs
 - Support column naming (other than 'x1','x2',...)
 
 ## License
