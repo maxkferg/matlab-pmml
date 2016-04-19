@@ -121,7 +121,7 @@ classdef GaussianProcess < handle
             % Check that xNew has the same number of columns as the training values
             % xNew should be stored as rows of training points
             if (size(xNew,2)~=size(self.xTrain,2))
-                error(sprintf('xNew must have %i columns',size(self.xTrain,2)));
+                error('xNew must have %i columns',size(self.xTrain,2));
             end
 
             meanfunc = self.getMeanFunc();  % Zero mean function
