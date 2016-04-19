@@ -108,9 +108,35 @@ The model can be loaded and used to score some new values.
     p.score([1,4; 2,3; 0,3])
 ```
 
-## GPML Support
+## GPML Compatibility
 This package is designed to work flawlessly with the GPML package. GPML objects can easily be converted
-to PMML by padding it's hyperparameters to the `pmml.GaussianProcess` class.
+to PMML by adding it's hyperparameters to the `pmml.GaussianProcess` class.
+```matlab
+% Use the GPML package to train a GP model
+hyp = minimize(self.hyp, @gp, n, infer, meanZero, ARDSquaredExponentialKernel, likGauss, x, y);
+
+% Save that model to PMML
+meanFunc = 'MeanZero';
+infFunc = 'Exact';
+covFunc = 'ARDSquaredExponentialKernel';
+likFunc = 'Gaussian';
+p = pmml.GaussianProcess(hyp, inffunc, meanfunc, covfunc, likfunc, xTrain, yTrain);
+p.toPMML(filename);
+```
+MATLAB-PMML can also handle the training automatically. Internally it uses GPML, so the following code is equivaluent (and preferred) to the example above:
+```matlab
+meanFunc = 'MeanZero';
+infFunc = 'Exact';
+covFunc = 'ARDSquaredExponentialKernel';
+likFunc = 'Gaussian';
+% Define the model
+p = pmml.GaussianProcess(hyp, inffunc, meanfunc, covfunc, likfunc, xTrain, yTrain);
+% Train the model
+hyp = p.optimize()
+% Save the model
+p.toPMML(filename);
+```
+
 
 ## TODO
 - Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
