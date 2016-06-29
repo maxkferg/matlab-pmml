@@ -12,10 +12,10 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
 %    @output{Matrix} x. An m by n matrix containing x training values
 %    @output{Matrix} y. An m by 1 column vector containing y values
 
-    GPMODEL_TAG = 'gaussianprocessmodel';
-    TRAINING_TAG = 'traininginstances';
-    KERNEL_TAG = 'ardsquaredexponentialkernel';
-    INSTANCE_TAG = 'instancefields';
+    GPMODEL_TAG = 'GaussianProcessModel';
+    TRAINING_TAG = 'TrainingInstances';
+    KERNEL_TAG = 'ARDSquaredExponentialKernel';
+    INSTANCE_TAG = 'InstanceFields';
 
     fprintf('Loading xml file\n')
     tree = xmlread(filename);
@@ -29,9 +29,9 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     % We need to allocate a table for the training values
     % We assign the correct column names and initialize the values to zero
     % Eventually we will be able to support different feature labels
-    nrows = getAttribute(trainingSchema,'recordcount','double');
+    nrows = getAttribute(trainingSchema,'recordCount','double');
     records = table;
-    columns = getChildren(instanceFields,'instancefield');
+    columns = getChildren(instanceFields,'InstanceField');
     for i=1:length(columns)
         records(:,i) = table(zeros(nrows,1));
         records.Properties.VariableNames{i} = getAttribute(columns(i),'field');
@@ -45,8 +45,8 @@ function [hyp, infFunc, meanFunc, covFunc, likFunc, x, y] = parse(self,filename)
     % Populate the hyperparameters
     fprintf('Populating hyperparams\n')
     gamma = getAttribute(kernalSchema,'gamma','double');
-    noise = getAttribute(kernalSchema,'noisevariance','double');
-    lambdaArray = getChild(getChild(kernalSchema,'lambda'),'array');
+    noise = getAttribute(kernalSchema,'noiseVariance','double');
+    lambdaArray = getChild(getChild(kernalSchema,'Lambda'),'array');
     n = getAttribute(lambdaArray,'n','int');
     lambda = parseArray(lambdaArray.Children.Data,n);
 
@@ -107,7 +107,7 @@ function records = getTrainingSet(document,records)
 % This code is performance critical, so it uses the Java xpath library
     % Create an XPath expression.
     fprintf('Loading training set\n')
-    nodeList = getXPath(document,'pmml/gaussianprocessmodel/traininginstances/inlinetable/row');
+    nodeList = getXPath(document,'PMML/GaussianProcessModel/TrainingInstances/InlineTable/row');
     
     % Iterate through the nodes that are returned.
     values = zeros(size(records));
@@ -159,7 +159,7 @@ function children = parseChildNodes(theNode)
     children = [];
     
     % For performance reasons we do not parse the table
-    if strcmp(theNode.getNodeName,'inlinetable')
+    if strcmp(theNode.getNodeName,'InlineTable')
        return 
     end
     
