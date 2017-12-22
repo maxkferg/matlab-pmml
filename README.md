@@ -137,10 +137,13 @@ hyp = p.optimize()
 p.toPMML(filename);
 ```
 
-
 ## TODO
 - Support for 'RadialBasisKernel' and 'GeneralizedExponentialKernel' in Matlab package
 - Support column naming (other than 'x1','x2',...)
+
+## Contributors
+* Max Ferguson: [@maxkferg](https://github.com/maxkferg)
+* Stanford Engineering Informatics Group: [eil.stanford.edu](http://eil.stanford.edu/index.html)
 
 ## License
 MIT
