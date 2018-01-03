@@ -144,7 +144,3 @@ p.toPMML(filename);
 ## Contributors
 * Max Ferguson: [@maxkferg](https://github.com/maxkferg)
 * Stanford Engineering Informatics Group: [eil.stanford.edu](http://eil.stanford.edu/index.html)
-
-## License
-MIT
-
